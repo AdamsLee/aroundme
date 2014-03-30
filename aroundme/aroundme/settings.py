@@ -16,3 +16,6 @@ ITEM_PIPELINES = {
 }
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
 #USER_AGENT = 'aroundme (+http://www.yourdomain.com)'
+
+CONCURRENT_REQUESTS_PER_DOMAIN = 1
+DOWNLOAD_DELAY = 1
