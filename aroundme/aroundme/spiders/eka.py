@@ -19,6 +19,21 @@ class EkaSpider(Spider):
     ]
     global crawledUrls
     crawledUrls = ["http://www.eka.cn/index.php?app=shop&city=64"]
+    global cityDict
+    cityDict = {}
+    
+    def getCityDict(self, sel, base_url):
+        cityLinks = sel.xpath('//ul/li[@class="city_li"]/a/@href').extract()
+        cityNames = sel.xpath('//ul/li[@class="city_li"]/a//text()').extract()
+        if len(cityLinks) == len(cityNames):
+            i=0
+            while i < len(cityLinks):
+                url = urljoin_rfc(base_url, cityLinks[i])
+                qs = self.get_query_strings(url)
+                cityId = qs['city']
+                if cityId != '':
+                    cityDict[cityId] = cityNames[i]
+                i = i + 1
     
     def isStoreListPage(self, sel):
         return sel.xpath('//div[@class="store_con"]') != []
@@ -45,6 +60,7 @@ class EkaSpider(Spider):
         item['fromUrl'] = respUrl
         qs = self.get_query_strings(respUrl)
         item['externalId'] = qs['id']
+        item['city_name'] = cityDict[qs['city']]
         brandpos = sel.xpath('//div[@class="brand_position"]//text()')
         if len(brandpos) > 0:
             tmp = brandpos[len(brandpos) - 1].extract()
@@ -105,6 +121,9 @@ class EkaSpider(Spider):
             item = self.crawl_store_info_from_biz_card_page(response.url, sel)
             items.append(item)
         else:
+            if cityDict == {}:
+                self.getCityDict(sel, base_url)
+                
             for cityUrl in cities:
                 self.crawl_url(base_url, cityUrl, items)
                 

@@ -13,7 +13,10 @@ class AroundmeItem(Item):
 class EkaStoreListItem(Item):
     externalId = Field()
     name = Field()
-    main_business = Field() 
+    main_business = Field()
+    city_name = Field()
+    district_name = Field()
+    category = Field()
     address = Field()
     contact_phone = Field()
     opening_hours = Field()
